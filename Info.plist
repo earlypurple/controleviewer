@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>ControleViewer</string>
+    <key>CFBundleDisplayName</key>
+    <string>ControleViewer</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.exemple.controleviewer</string>
+    <key>CFBundleVersion</key>
+    <string>1.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>13.0</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Cette application utilise la caméra pour détecter les gestes de la main et contrôler votre Mac.</string>
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>Cette application utilise le réseau local pour se connecter à votre iPhone et recevoir des commandes de contrôle.</string>
+    <key>NSBonjourServices</key>
+    <array>
+        <string>_mac-controller._tcp</string>
+        <string>_mac-controller._udp</string>
+    </array>
+</dict>
+</plist>

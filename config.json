@@ -1,0 +1,44 @@
+{
+  "detection": {
+    "confidence_threshold": 0.7,
+    "gesture_cooldown_ms": 500,
+    "hand_detection_enabled": true
+  },
+  "gestures": {
+    "pointing": {
+      "enabled": true,
+      "action": "move_cursor",
+      "description": "Index levé - Déplace le curseur"
+    },
+    "closed_fist": {
+      "enabled": true,
+      "action": "left_click",
+      "description": "Poing fermé - Clic gauche"
+    },
+    "peace_sign": {
+      "enabled": true,
+      "action": "right_click",
+      "description": "Signe de paix - Clic droit"
+    },
+    "open_hand": {
+      "enabled": true,
+      "action": "scroll",
+      "description": "Main ouverte - Contrôle du scroll"
+    }
+  },
+  "camera": {
+    "preferred_position": "front",
+    "resolution": "medium",
+    "fps": 30
+  },
+  "multipeer": {
+    "service_type": "mac-controller",
+    "auto_accept_connections": true,
+    "device_name": "Mac-ControleViewer"
+  },
+  "ui": {
+    "show_camera_preview": true,
+    "show_gesture_debug": true,
+    "window_always_on_top": false
+  }
+}

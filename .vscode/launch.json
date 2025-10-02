@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:controleviewer}",
+            "name": "Debug controleviewer",
+            "program": "${workspaceFolder:controleviewer}/.build/debug/controleviewer",
+            "preLaunchTask": "swift: Build Debug controleviewer"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:controleviewer}",
+            "name": "Release controleviewer",
+            "program": "${workspaceFolder:controleviewer}/.build/release/controleviewer",
+            "preLaunchTask": "swift: Build Release controleviewer"
+        }
+    ]
+}
