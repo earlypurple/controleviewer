@@ -17,10 +17,13 @@ class SystemController: ObservableObject {
 
     private var actionThrottler = ActionThrottler()
     private var cursorSmoother = CursorSmoother()
+    private var calibrationData: CalibrationData?
+    private var lastMousePosition: CGPoint?
 
     init() {
         checkAccessibilityPermissions()
         setupGestureNotifications()
+        setupCalibrationNotifications()
     }
 
     // MARK: - Public Methods
@@ -96,7 +99,22 @@ class SystemController: ObservableObject {
             queue: .main
         ) { [weak self] notification in
             guard let gesture = notification.object as? DetectedGesture else { return }
-            self?.handleDetectedGesture(gesture)
+            Task { @MainActor in
+                self?.handleDetectedGesture(gesture)
+            }
+        }
+    }
+    
+    private func setupCalibrationNotifications() {
+        NotificationCenter.default.addObserver(
+            forName: .calibrationCompleted,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            if let data = notification.object as? CalibrationData {
+                self?.calibrationData = data
+                print("✅ Calibration data loaded into SystemController")
+            }
         }
     }
 
@@ -122,14 +140,50 @@ class SystemController: ObservableObject {
     }
 
     private func convertToScreenCoordinates(_ point: CGPoint) -> CGPoint {
-        // Conversion des coordonnées normalisées (0-1) en coordonnées écran
         guard let screen = NSScreen.main else { return .zero }
-
         let screenFrame = screen.frame
+        
+        // Si on a des données de calibration, les utiliser
+        if let calibrationData = calibrationData, calibrationData.isCalibrated {
+            // Appliquer la transformation calibrée
+            var calibratedPoint = point.applying(calibrationData.screenMapping)
+            
+            // Appliquer les facteurs de mise à l'échelle
+            calibratedPoint.x *= calibrationData.scalingFactor.x
+            calibratedPoint.y *= calibrationData.scalingFactor.y
+            
+            // Appliquer l'offset de translation
+            calibratedPoint.x += calibrationData.translationOffset.x
+            calibratedPoint.y += calibrationData.translationOffset.y
+            
+            // Appliquer la sensibilité
+            if let lastPos = lastMousePosition {
+                let deltaX = (calibratedPoint.x - lastPos.x) * calibrationData.movementSensitivity
+                let deltaY = (calibratedPoint.y - lastPos.y) * calibrationData.movementSensitivity
+                
+                // Appliquer la zone morte pour éviter les micro-mouvements
+                if abs(deltaX) < calibrationData.deadZoneRadius && abs(deltaY) < calibrationData.deadZoneRadius {
+                    return lastPos // Pas de mouvement si dans la zone morte
+                }
+                
+                calibratedPoint = CGPoint(x: lastPos.x + deltaX, y: lastPos.y + deltaY)
+            }
+            
+            // Limiter aux bornes de l'écran
+            calibratedPoint.x = max(0, min(screenFrame.width, calibratedPoint.x))
+            calibratedPoint.y = max(0, min(screenFrame.height, calibratedPoint.y))
+            
+            lastMousePosition = calibratedPoint
+            return calibratedPoint
+        }
+        
+        // Conversion standard sans calibration
         let x = point.x * screenFrame.width
         let y = (1 - point.y) * screenFrame.height // Inverser Y pour macOS
 
-        return CGPoint(x: x, y: y)
+        let standardPoint = CGPoint(x: x, y: y)
+        lastMousePosition = standardPoint
+        return standardPoint
     }
 
     // MARK: - Mouse Actions

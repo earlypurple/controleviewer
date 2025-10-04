@@ -152,22 +152,68 @@ class HandGestureClassifier {
               indices.allSatisfy({ $0 < landmarks.count }) else { return false }
 
         let tip = landmarks[indices[0]]
-        let _ = landmarks[indices[1]] // dip
+        let dip = landmarks[indices[1]]
         let pip = landmarks[indices[2]]
         let mcp = landmarks[indices[3]]
 
-        // Vérifier si le doigt est étendu
-        // Méthode 1: Le tip doit être significativement plus loin du mcp que le pip
+        // Pour l'index, on utilise une détection renforcée
+        if finger == .index {
+            // Vérification 1: Distance - le tip doit être significativement plus loin
+            let tipToMcp = distance(tip, mcp)
+            let pipToMcp = distance(pip, mcp)
+            let dipToMcp = distance(dip, mcp)
+            
+            // Le doigt doit être progressivement plus étendu
+            let progressiveExtension = tipToMcp > dipToMcp && dipToMcp > pipToMcp
+            
+            // Vérification 2: Alignement vertical - le tip doit être au-dessus
+            let verticalAlignment = tip.y < pip.y - 0.015 // Plus strict pour l'index
+            
+            // Vérification 3: Angle - le doigt doit être relativement droit
+            let angle = calculateFingerAngle(tip: tip, pip: pip, mcp: mcp)
+            let straightCheck = angle > 150 // Angle supérieur à 150° = doigt droit
+            
+            // Vérification 4: Extension significative par rapport aux autres articulations
+            let extensionRatio = tipToMcp / max(pipToMcp, 0.01)
+            let extensionCheck = extensionRatio > 1.15 // 15% plus loin minimum
+            
+            // Pour l'index, toutes les vérifications doivent passer
+            return progressiveExtension && verticalAlignment && straightCheck && extensionCheck
+        }
+        
+        // Pour les autres doigts, utiliser la méthode standard
         let tipDistance = distance(tip, mcp)
         let pipDistance = distance(pip, mcp)
         
-        // Méthode 2: Le tip doit être au-dessus (y plus petit) du pip pour la plupart des doigts
+        // Vérification de hauteur
         let heightCheck = tip.y < pip.y + 0.02 // Tolérance de 2%
         
-        // Un doigt est étendu si les deux conditions sont remplies
+        // Vérification de distance
         let distanceCheck = tipDistance > pipDistance * 1.1 // Le tip doit être au moins 10% plus loin
         
         return distanceCheck && heightCheck
+    }
+    
+    // Calculer l'angle du doigt pour vérifier qu'il est droit
+    private func calculateFingerAngle(tip: CGPoint, pip: CGPoint, mcp: CGPoint) -> Double {
+        // Vecteur du mcp au pip
+        let v1 = CGPoint(x: pip.x - mcp.x, y: pip.y - mcp.y)
+        // Vecteur du pip au tip
+        let v2 = CGPoint(x: tip.x - pip.x, y: tip.y - pip.y)
+        
+        // Produit scalaire
+        let dotProduct = v1.x * v2.x + v1.y * v2.y
+        
+        // Magnitudes
+        let mag1 = sqrt(v1.x * v1.x + v1.y * v1.y)
+        let mag2 = sqrt(v2.x * v2.x + v2.y * v2.y)
+        
+        // Angle en degrés
+        let cosAngle = dotProduct / max(mag1 * mag2, 0.001)
+        let angleRadians = acos(min(max(cosAngle, -1.0), 1.0))
+        let angleDegrees = angleRadians * 180.0 / .pi
+        
+        return angleDegrees
     }
 
     private func getFingerIndices(_ finger: FingerType) -> [Int] {

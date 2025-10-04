@@ -123,7 +123,7 @@ struct ContentView: View {
         }
         .navigationTitle("")
         .sheet(isPresented: $isCalibrating) {
-            CalibrationSheet(gestureManager: gestureManager, isPresented: $isCalibrating)
+            ImprovedCalibrationView(gestureManager: gestureManager, isPresented: $isCalibrating)
         }
     }
 }

@@ -32,7 +32,6 @@ class GestureManager: NSObject, ObservableObject {
 
     // Gesture recognition
     private var gestureClassifier = HandGestureClassifier()
-    private var calibrationData: CalibrationData?
 
     // Configuration
     @Published var settings = GestureSettings()
@@ -64,8 +63,8 @@ class GestureManager: NSObject, ObservableObject {
     }
 
     func calibrate() {
-        calibrationData = CalibrationData()
-        // Commencer le processus de calibration
+        // Le processus de calibration est maintenant géré par CalibrationManager
+        print("Use CalibrationManager for calibration")
     }
 
     func updateSettings(_ newSettings: GestureSettings) {
@@ -220,12 +219,6 @@ struct GestureSettings {
     var trackingEnabled: Bool = true
     var smoothingEnabled: Bool = true
     var calibrationEnabled: Bool = true
-}
-
-struct CalibrationData {
-    var workspaceRect: CGRect = .zero
-    var screenMapping: CGAffineTransform = .identity
-    var gestureThresholds: [GestureType: Float] = [:]
 }
 
 extension Notification.Name {
