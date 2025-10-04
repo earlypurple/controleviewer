@@ -1,44 +1,118 @@
 {
+  "application": {
+    "name": "ControleViewer Pro",
+    "version": "2.0.0",
+    "buildNumber": "2025.1.0",
+    "author": "ControleViewer Team"
+  },
   "detection": {
     "confidence_threshold": 0.7,
     "gesture_cooldown_ms": 500,
-    "hand_detection_enabled": true
+    "hand_detection_enabled": true,
+    "stabilization_frames": 5,
+    "adaptive_thresholds": true
   },
   "gestures": {
     "pointing": {
       "enabled": true,
       "action": "move_cursor",
-      "description": "Index levé - Déplace le curseur"
+      "description": "Index levé - Déplace le curseur",
+      "sensitivity": 0.8
+    },
+    "pinch": {
+      "enabled": true,
+      "action": "left_click",
+      "description": "Pince - Clic gauche",
+      "sensitivity": 0.8
     },
     "closed_fist": {
       "enabled": true,
-      "action": "left_click",
-      "description": "Poing fermé - Clic gauche"
+      "action": "right_click",
+      "description": "Poing fermé - Clic droit",
+      "sensitivity": 0.8
     },
     "peace_sign": {
       "enabled": true,
-      "action": "right_click",
-      "description": "Signe de paix - Clic droit"
+      "action": "double_click",
+      "description": "Signe de paix - Double clic",
+      "sensitivity": 0.8
+    },
+    "thumbs_up": {
+      "enabled": true,
+      "action": "scroll_up",
+      "description": "Pouce levé - Scroll haut",
+      "sensitivity": 0.8
     },
     "open_hand": {
       "enabled": true,
-      "action": "scroll",
-      "description": "Main ouverte - Contrôle du scroll"
+      "action": "mission_control",
+      "description": "Main ouverte - Mission Control",
+      "sensitivity": 0.8
+    },
+    "swipe_left": {
+      "enabled": true,
+      "action": "navigate_back",
+      "description": "Balayage gauche - Navigation arrière",
+      "sensitivity": 0.8
+    },
+    "swipe_right": {
+      "enabled": true,
+      "action": "navigate_forward",
+      "description": "Balayage droite - Navigation avant",
+      "sensitivity": 0.8
     }
   },
   "camera": {
     "preferred_position": "front",
-    "resolution": "medium",
-    "fps": 30
+    "resolution": "1280x720",
+    "fps": 30,
+    "enable_hdr": false,
+    "enable_stabilization": true,
+    "detection_quality": "high"
+  },
+  "ai": {
+    "enable_learning": true,
+    "learning_mode": "continuous",
+    "max_training_data": 1000,
+    "auto_save_interval": 30,
+    "precision_target": 0.92
   },
   "multipeer": {
     "service_type": "mac-controller",
     "auto_accept_connections": true,
-    "device_name": "Mac-ControleViewer"
+    "device_name": "Mac-ControleViewer",
+    "enable_iphone_companion": true
   },
   "ui": {
     "show_camera_preview": true,
     "show_gesture_debug": true,
-    "window_always_on_top": false
+    "window_always_on_top": false,
+    "theme": "dark",
+    "show_fps": true,
+    "show_confidence": true,
+    "compact_mode": false,
+    "enable_notifications": true
+  },
+  "system": {
+    "enable_system_control": true,
+    "enable_keyboard_shortcuts": true,
+    "enable_accessibility": true,
+    "log_level": "info"
+  },
+  "performance": {
+    "enable_gpu_acceleration": true,
+    "enable_multithreading": true,
+    "max_cpu_usage": 20,
+    "enable_power_saving": false
+  },
+  "cloud": {
+    "enabled": false,
+    "sync_gestures": false,
+    "share_statistics": false
+  },
+  "developer": {
+    "debug_mode": false,
+    "enable_experimental_features": false,
+    "verbose_logging": false
   }
 }
